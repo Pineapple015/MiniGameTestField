@@ -1,0 +1,48 @@
+﻿using UnityEngine;
+using UnityEngine.UI;
+
+namespace TestField {
+    public class ENVMain : MonoBehaviour {
+        public Text MessageDisplayer;
+
+        void Awake() {
+            // 获取对当前小游戏的引用，方便后续操作
+            _game = GameObject.Find("GamePrefab").GetComponent<MiniGameBase>();
+        }
+        void Start() {
+            // 侦听小游戏的GameCompleted事件，触发后显示信息并关闭小游戏
+            _game.GameCompleted += (status) => {
+                MessageDisplayer.text = $"侦测到小游戏完成并返回状态码{status}";
+                CloseGameHelper();
+            };
+            // 侦听小游戏的CloseRequested事件
+            _game.CloseRequested += () => {
+                MessageDisplayer.text = "侦测到小游戏请求关闭操作";
+                CloseGameHelper();
+            };
+        }
+
+        public void StartGame(int type) {
+            _game.gameObject.SetActive(true);
+            if (type == 0) {
+                MessageDisplayer.text = $"主环境请求以VN模式载入小游戏";
+                _game.LoadGame(() => { }, MiniGameLoadMode.FromVisualNovel);
+            }
+            else if (type == 1) {
+                MessageDisplayer.text = $"主环境请求以营地模式载入小游戏";
+                _game.LoadGame(() => { }, MiniGameLoadMode.FromCampsite);
+            }
+        }
+        public void CloseGame() {
+            MessageDisplayer.text = $"主环境主动关闭小游戏";
+            CloseGameHelper();
+        }
+
+        private MiniGameBase _game;
+        private void CloseGameHelper() {
+            _game.UnloadGame(() => {
+                _game.gameObject.SetActive(false);
+            });
+        }
+    }
+}
