@@ -7,7 +7,10 @@ namespace TestField {
 
         void Awake() {
             // 获取对当前小游戏的引用，方便后续操作
-            _game = GameObject.Find("GamePrefab").GetComponent<MiniGameBase>();
+            _game = GameObject.Find("GamePrefab")?.GetComponent<MiniGameBase>();
+            if (_game == null) {
+                throw new System.Exception("未找到小游戏的根节点'GamePrefab'，请确保根节点其命名正确且挂载了MiniGameBase子类");
+            }
         }
         void Start() {
             // 侦听小游戏的GameCompleted事件，触发后显示信息并关闭小游戏

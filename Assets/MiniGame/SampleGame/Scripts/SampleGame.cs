@@ -25,6 +25,25 @@ namespace TestField {
                 return;
             }
 
+            // 如果当前模式为VN模式，按下鼠标左键时显示/跳过/隐藏对话
+            if (Input.GetMouseButtonDown(0)) {
+                // 如果当前没有对话，则显示一条对话
+                if (!_hasDialog) {
+                    VNSimulation.Current.ShowDialog("阿草", "小伙伴你好！建议收到！", "阿草-通常");
+                    _hasDialog = true;
+                }
+                else {
+                    // 否则如果对话的打字机动画未完成，此次点击视为跳过动画；否则视为隐藏对话
+                    if (!VNSimulation.Current.IsDialogTextAnimationCompleted()) {
+                        VNSimulation.Current.SkipDialogTextAnimation();
+                    }
+                    else {
+                        VNSimulation.Current.HideDialog();
+                        _hasDialog = false;
+                    }
+                }
+            }
+
             // 没什么特殊操作，就是AD移动小球
             if (Input.GetKey(KeyCode.A)) {
                 _targetPos = Ball.transform.position;
@@ -40,8 +59,9 @@ namespace TestField {
         }
 
         public override void LoadGame(Action onCompleted, MiniGameLoadMode loadMode) {
+            _gameMode = loadMode;
             // 仅作为简单示例，从VN载入时小球为蓝色，从营地载入时小球为红色
-            switch (loadMode) {
+            switch (_gameMode) {
                 case MiniGameLoadMode.FromVisualNovel:
                     Ball.transform.Find("Sprite").GetComponent<SpriteRenderer>().color = Color.blue;
                     MessageDisplayer.text = "小游戏已从VN中载入，小球当前为蓝色";
@@ -67,7 +87,9 @@ namespace TestField {
             onCompleted?.Invoke();
         }
 
-        private bool _gameAcitved;
+        private MiniGameLoadMode _gameMode;
         private Vector3 _targetPos;
+        private bool _gameAcitved;
+        private bool _hasDialog;
     }
 }
