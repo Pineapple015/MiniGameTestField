@@ -25,8 +25,8 @@ namespace TestField {
                 return;
             }
 
-            // 如果当前模式为VN模式，按下鼠标左键时显示/跳过/隐藏对话
-            if (Input.GetMouseButtonDown(0)) {
+            // 如果当前模式为VN模式，按下空格时显示/跳过/隐藏对话
+            if (_gameMode == MiniGameLoadMode.FromVisualNovel && Input.GetKeyDown(KeyCode.Space)) {
                 // 如果当前没有对话，则显示一条对话
                 if (!_hasDialog) {
                     VNSimulation.Current.ShowDialog("阿草", "小伙伴你好！建议收到！", "阿草-通常");
