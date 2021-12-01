@@ -4,14 +4,14 @@
 
 该项目为小游戏测试场地，用于确保小游戏的兼容性
 
-说人话就是只要你的小游戏能在这里正常跑，基本上塞到主游戏里面就没什么问题了
+说人话就是只要你的小游戏能在这里按测试标准正常跑，基本上就说明塞到主游戏里面就没什么问题了
 
 
 
 ## 开发信息
 
 1. Unity版本：2019.4.32f1
-2. 使用管线：Universal Render Pipeline（URP）
+2. 使用管线：**Universal Render Pipeline（URP）**
 3. 插件依赖：
    * Universal RP（7.7.1）
 
@@ -26,7 +26,9 @@
          * EnvCollision.cs：主环境碰撞检测组件
          * MiniGameBase.cs：小游戏的基类，请确保小游戏继承子该基类并实现相应接口
          * MiniGameLoadMode.cs：枚举，指示小游戏的载入模式
-
+         * GlobalSettings.cs：全局设置接口，控制游戏的通用设置
+         * VNSimulation.cs：视觉小说内交互接口模拟器
+       
      * **MiniGame**：小游戏相关文件夹
        * Scripts：示例小游戏相关文件夹
          * SampleGame.cs：示例小游戏的主代码
@@ -39,11 +41,15 @@
 
 ## 使用说明
 
-### 0. MiniGameBase基类说明
+### 0. 可用类
 
-所有事件/方法均为public
+1. **MiniGameBase基类说明**
 
-后续接口可能有修改，但大致上应该不会有太大变化
+​		该类作为小游戏的基类，实现相应接口
+
+​		所有事件/方法均为public
+
+​		后续接口可能有修改，但大致上应该不会有太大变化
 
 ```c#
 /* 该事件表示小游戏已完成，在游戏完成时通过OnGameCompleted方法引发该事件，并附带状态码
@@ -75,6 +81,28 @@ virtual void OnGameCompleted(int status);
 /* 引发CloseRequested的辅助方法，该方法为虚方法，可以根据需要覆写 */
 virtual void OnCloseRequested();
 ```
+
+ 2. **VNSimulation**
+
+    该类用于临时模拟小游戏与视觉小说的对话框调用等交互
+
+    正式合并时只需要将该部分替换为正式接口即可
+
+    详细内容请见注释
+
+ 3. **GlobalSettings**
+
+    该类为静态类，用于设置/获取全局设置，目前提供以下全局设置
+
+    1：全局音量
+
+    2：音乐音量
+
+    3：效果音音量
+
+    制作小游戏的设置菜单时，可使用该类对全局设置进行控制
+
+    详细内容请见注释
 
 
 
@@ -145,7 +173,7 @@ virtual void OnCloseRequested();
 
 ​		6：请勿对除GamePrefab及其子对象的其他游戏对象进行任何改动（包括添加其他游戏对象的操作）
 
-​	（如果你的小游戏确实需要多个Layer或者Sorting Layer，请将其写在README中）
+​		7：小游戏内请勿使用任何会影响全局的设置，包括设置时间缩放、帧率等等
 
 ​	将你的小游戏主体部分做成Prefab，然后将该Prefab拖拽到**TestField**中，并将其命名为GamePrefab后即可。
 
@@ -155,7 +183,15 @@ virtual void OnCloseRequested();
 
 ### 4. 测试标准
 
-在不修改除你的GamePrefab及其子对象的情况下，在TestField中正常游玩且不影响主环境（如触发主环境的碰撞检测或引起其他预期外的修改），并正确加载/关闭小游戏以及引发GameCompleted事件即可。
+​	**1：场景环境无关：**
+
+​		在不修改除你的GamePrefab及其子对象的情况下（换言之，仅修改小游戏相关的内容而不改动任何全局设置），在TestField中正常游玩且不影响主环境（如触发主环境的碰撞检测或引起其他预期外的修改），并正确加载/关闭小游戏以及引发GameCompleted事件即可。（同时避免添加额外的全局信息，包括Layer和Sorting Layer，Tag等信息。但如果确实无法避免添加额外信息，请将其写在README中以便合并时调整。）
+
+​	**2：全局环境无关：**
+
+​	小游戏开启/关闭后不会对游戏全局设置造成任何影响
+
+
 
 
 
@@ -165,6 +201,4 @@ virtual void OnCloseRequested();
 
 如确实有需要，请在下方填入bug反馈与调整要求
 
-```
-NULL
-```
+1. NULL
