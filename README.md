@@ -111,9 +111,7 @@ virtual void OnCloseRequested();
     
     * 读取说明：
     
-      读取时会将gameName转化为具体文件名fileName，读取fileName并反序列化为List\<TRankingRecord\>，取前MaxRecords记录
-    
-    ​	返回
+      读取时会将gameName转化为具体文件名fileName，读取fileName并反序列化为List\<TRankingRecord\>，取前MaxRecords记录返回
     
     ```c#
     /* 该字段指示存档列表的容量，当前为7，分别是五位姑娘、阿草与一个魂 */
