@@ -82,6 +82,113 @@ virtual void OnGameCompleted(int status);
 virtual void OnCloseRequested();
 ```
 
+
+
+ 2. **RankingManager**
+
+    该类为静态帮助类，用于读写小游戏的排名信息
+
+    * 储存说明：
+
+      ​	储存时会将gameName转化为具体文件名fileName，将rankingRecords的复制到一个列表副本中，对列表副本进行排序后取前MaxRecords条记录，对其进行json序列化后写入到fileName中，json结构如下
+
+    ```json
+    [
+        {
+            "Name": "阿草",
+            "Score": 114
+        },
+        {
+            "Name": "一个魂",
+            "Score": 115
+        },
+        {
+            "Name": "一个一个魂",
+            "Score": 116
+        }
+    ]
+    ```
+    
+    * 读取说明：
+    
+    ​	读取时会将gameName转化为具体文件名fileName，读取fileName并反序列化为List\<TRankingRecord\>，取前MaxRecords记录
+    
+    ​	返回
+    
+    ```c#
+    /* 该字段指示存档列表的容量，当前为7，分别是五位姑娘、阿草与一个魂 */
+    int MaxRecords = 7;
+        
+    /* 保存小游戏排行榜数据至指定文件 */
+    bool SaveRankInfo(List<RankingRecord> rankingRecords, string gameName);
+        
+    /* 保存小游戏排行榜数据至指定文件方法的泛型版本，泛型TRankingRecord约束为继承自RankingRecord */
+    bool SaveRankInfo<TRankingRecord>(List<TRankingRecord> rankingRecords, string gameName);
+    
+    /* 读取小游戏的排行榜数据，该方法为泛型方法，泛型TRankingRecord约束为继承自RankingRecord */
+    List<RankingRecord> LoadRankInfo(string gameName);
+    
+    /* 读取小游戏的排行榜数据方法的泛型版本，泛型TRankingRecord约束为继承自RankingRecord */
+    List<TRankingRecord> LoadRankInfo<TRankingRecord>(string gameName);
+    ```
+    
+    * 相关类：
+    
+      **RankingRecord**
+    
+      该类为排名记录项的基类，若需要使用更复杂的排名记录来记录额外的信息，请继承自该类
+    
+      ```c#
+      /* 玩家名 */
+      string Name { get; set; }
+      
+      /* 得分 */
+      int Score { get; set; }
+      
+      /* IComparable下的CompareTo方法，用于比较排名次序，该方法为虚方法，可以在派生类中重写 */
+      int CompareTo(RankingRecord other);
+      ```
+    
+      例如，如果你希望你的json文件中除了储存玩家名和得分外，还想储存本局游戏用时等信息，如下
+      
+      ```c#
+      [
+          {
+              "Name": "阿草",
+              "Score": 114,
+              "Time": 5
+          },
+          {
+              "Name": "一个魂",
+              "Score": 115,
+              "Time": 10
+          },
+          {
+              "Name": "一个一个魂",
+              "Score": 116,
+              "Time": 15
+          }
+      ]
+      ```
+      
+      你可以创建一个继承自**RankingRecord**的类，然后在排行榜信息时使用泛型版本的方法，如下
+      
+      ```c#
+      public class MyRankingRecord : RankingRecord
+      {
+          public int Time {get; set;}
+      }
+      
+      // 使用泛型方法保存
+      RankingManager.SaveRankingRecords<MyRankingRecord>(ranking2, "MyGame");
+      
+      // 使用泛型方法读取
+      var records = RankingManager.LoadRankingRecords<MyRankingRecord>("MyGame");
+      ```
+      
+      
+
+
  2. **VNSimulation**
 
     该类用于临时模拟小游戏与视觉小说的对话框调用等交互
@@ -89,6 +196,8 @@ virtual void OnCloseRequested();
     正式合并时只需要将该部分替换为正式接口即可
 
     详细内容请见注释
+
+    
 
  3. **GlobalSettings**
 
@@ -103,6 +212,8 @@ virtual void OnCloseRequested();
     制作小游戏的设置菜单时，可使用该类对全局设置进行控制
 
     详细内容请见注释
+
+    
 
 
 
