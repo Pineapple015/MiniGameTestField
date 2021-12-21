@@ -96,7 +96,7 @@ virtual void OnCloseRequested();
     [
         {
             "Name": "阿草",
-            "Score": 114
+            "Score": 116
         },
         {
             "Name": "一个魂",
@@ -104,7 +104,7 @@ virtual void OnCloseRequested();
         },
         {
             "Name": "一个一个魂",
-            "Score": 116
+            "Score": 114
         }
     ]
     ```
@@ -153,7 +153,7 @@ virtual void OnCloseRequested();
       [
           {
               "Name": "阿草",
-              "Score": 114,
+              "Score": 116,
               "Time": 5
           },
           {
@@ -163,13 +163,13 @@ virtual void OnCloseRequested();
           },
           {
               "Name": "一个一个魂",
-              "Score": 116,
+              "Score": 114,
               "Time": 15
           }
       ]
       ```
       
-      你可以创建一个继承自**RankingRecord**的类，然后在排行榜信息时使用泛型版本的方法，如下
+      你可以创建一个继承自**RankingRecord**的类，然后在读写排行榜信息时使用泛型版本的方法，如下
       
       ```c#
       public class MyRankingRecord : RankingRecord
