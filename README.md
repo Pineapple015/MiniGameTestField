@@ -90,7 +90,7 @@ virtual void OnCloseRequested();
 
     * 储存说明：
 
-      ​	储存时会将gameName转化为具体文件名fileName，将rankingRecords的复制到一个列表副本中，对列表副本进行排序后取前MaxRecords条记录，对其进行json序列化后写入到fileName中，json结构如下
+      储存时会将gameName转化为具体文件名fileName，将rankingRecords的复制到一个列表副本中，对列表副本进行排序后取前MaxRecords条记录，对其进行json序列化后写入到fileName中，json结构如下
 
     ```json
     [
@@ -111,7 +111,7 @@ virtual void OnCloseRequested();
     
     * 读取说明：
     
-    ​	读取时会将gameName转化为具体文件名fileName，读取fileName并反序列化为List\<TRankingRecord\>，取前MaxRecords记录
+      读取时会将gameName转化为具体文件名fileName，读取fileName并反序列化为List\<TRankingRecord\>，取前MaxRecords记录
     
     ​	返回
     
