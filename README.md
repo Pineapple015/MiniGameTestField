@@ -199,17 +199,13 @@ virtual void OnCloseRequested();
 
  3. **GlobalSettings**
 
-    该类为静态类，用于设置/获取全局设置，目前提供以下全局设置
+    该类为静态类，用于设获取全局设置，目前提供以下全局设置信息
 
-    1：全局音量
+    1：音乐音量：ActualVolumeOfMusic，只读属性，取值范围为[0,1]的float，直接赋值给AudioSource的volume即可
 
-    2：音乐音量
+    2：效果音音量：ActualVolumeOfFX，只读属性，取值范围为[0,1]的float，直接赋值给AudioSource的volume即可
 
-    3：效果音音量
-
-    制作小游戏的设置菜单时，可使用该类对全局设置进行控制
-
-    详细内容请见注释
+    目前来讲，只有这两个设置会影响小游戏，请注意在小游戏里完成与音量设置的同步代码
 
     
 
