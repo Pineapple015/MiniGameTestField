@@ -85,10 +85,12 @@ namespace TestField {
             // !!! 下面是初始化游戏，由于游戏比较简单，因此只需要重置小球的位置即可
             Ball.transform.position = Vector2.zero;
             _targetPos = Vector2.zero;
-            _gameAcitved = true;
 
             // !!! 调用onCompleted回调函数，让其完成后续操作
             onCompleted?.Invoke();
+
+            // 等待onCompleted完成操作，因此_gameActived在onCompleted完成后才设置为true
+            _gameAcitved = true;
         }
 
         /// <summary>
