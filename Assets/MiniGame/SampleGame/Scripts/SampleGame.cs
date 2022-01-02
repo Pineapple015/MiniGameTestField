@@ -25,7 +25,8 @@ namespace TestField {
                 return;
             }
 
-            // 如果当前模式为VN模式，按下空格时显示/跳过/隐藏对话
+            // !!! 如果当前模式为VN模式，按下空格时显示/跳过/隐藏对话
+            // !!! 此部分用于演示在你的小游戏中如何根据从LoadGame方法中获取的MiniGameLoadMode的值调整游戏具体行为
             if (_gameMode == MiniGameLoadMode.FromVisualNovel && Input.GetKeyDown(KeyCode.Space)) {
                 // 如果当前没有对话，则显示一条对话
                 if (!_hasDialog) {
@@ -44,7 +45,7 @@ namespace TestField {
                 }
             }
 
-            // 没什么特殊操作，就是AD移动小球
+            // 没什么特殊操作，就是AD移动小球，实现也很简单粗暴，不用管
             if (Input.GetKey(KeyCode.A)) {
                 _targetPos = Ball.transform.position;
                 _targetPos.x -= 1.0f;
@@ -58,9 +59,18 @@ namespace TestField {
             }
         }
 
+
+        /// <summary>
+        /// !!! 此方法为此示例小游戏对MiniGameBase中抽象LoadGame方法的实现
+        /// </summary>
+        /// <param name="onCompleted">加操作完成后执行的回调></param>
+        /// <param name="loadMode">小游戏的载入模式</param>
         public override void LoadGame(Action onCompleted, MiniGameLoadMode loadMode) {
+            // 此类中有一个字段用于储存当前的游戏载入模式（因为在其他地方需要根据此字段的值调整行为）
             _gameMode = loadMode;
-            // 仅作为简单示例，从VN载入时小球为蓝色，从营地载入时小球为红色
+
+            // !!! 仅作为简单示例，如果是FromVisualNovel模式，则载入时小球为蓝色，从营地载入时小球为红色
+            // !!! 在实际实现中，你的小游戏应该需要根据loadMode的值禁用/启用某些操作，如设置/排行榜/关闭/难度选择等
             switch (_gameMode) {
                 case MiniGameLoadMode.FromVisualNovel:
                     Ball.transform.Find("Sprite").GetComponent<SpriteRenderer>().color = Color.blue;
@@ -71,23 +81,34 @@ namespace TestField {
                     MessageDisplayer.text = "小游戏已从营地中载入，小球当前为红色";
                     break;
             }
-            // 重置小球位置
+
+            // !!! 下面是初始化游戏，由于游戏比较简单，因此只需要重置小球的位置即可
             Ball.transform.position = Vector2.zero;
             _targetPos = Vector2.zero;
-            onCompleted?.Invoke();
             _gameAcitved = true;
+
+            // !!! 调用onCompleted回调函数，让其完成后续操作
+            onCompleted?.Invoke();
         }
+
+        /// <summary>
+        /// !!! 此方法为此示例小游戏对MiniGameBase中抽象UnloadGame方法的实现
+        /// </summary>
+        /// <param name="onCompleted">卸载操作完成后执行的回调</param>
         public override void UnloadGame(Action onCompleted) {
             _gameAcitved = false;
-            // 将小球变为白色并重置小球位置
+
+            // !!! 下面是重置游戏状态，由于游戏比较简单，因此只需要重置小球的位置即可
             Ball.transform.Find("Sprite").GetComponent<SpriteRenderer>().color = Color.white;
             Ball.transform.position = Vector2.zero;
             _targetPos = Vector2.zero;
             MessageDisplayer.text = "小游戏已关闭，小球当前为白色";
+
+            // !!! 调用onCompleted回调函数，让其完成后续操作
             onCompleted?.Invoke();
         }
 
-        private MiniGameLoadMode _gameMode;
+        private MiniGameLoadMode _gameMode; // 储存从LoadGame方法中获取的游戏载入模式
         private Vector3 _targetPos;
         private bool _gameAcitved;
         private bool _hasDialog;
