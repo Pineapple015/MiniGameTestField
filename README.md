@@ -43,7 +43,7 @@
 
 ### 0. 可用类
 
-1. **MiniGameBase基类说明**
+#### 1. MiniGameBase
 
 ​		将该类作为小游戏的基类，并实现定义的接口
 
@@ -84,130 +84,155 @@ virtual void OnCloseRequested();
 
 
 
- 2. **RankingManager**
+#### 2. RankingManager
 
-    该类为静态帮助类，用于读写小游戏的排名信息
+该类为静态帮助类，用于读写小游戏的排名信息
 
-    * 储存说明：
+* 储存说明：
 
-      储存时会将gameName转化为具体文件名fileName，将rankingRecords的复制到一个列表副本中，对列表副本进行排序后取前MaxRecords条记录，对其进行json序列化后写入到fileName中，json结构如下
+  储存时会将gameName转化为具体文件名fileName，将rankingRecords的复制到一个列表副本中，对列表副本进行排序后取前MaxRecords条记录，对其进行json序列化后写入到fileName中，json结构如下
 
-    ```json
-    [
-        {
-            "Name": "阿草",
-            "Score": 116
-        },
-        {
-            "Name": "一个魂",
-            "Score": 115
-        },
-        {
-            "Name": "一个一个魂",
-            "Score": 114
-        }
-    ]
-    ```
+```json
+[
+    {
+        "Name": "阿草",
+        "Score": 116
+    },
+    {
+        "Name": "一个魂",
+        "Score": 115
+    },
+    {
+        "Name": "一个一个魂",
+        "Score": 114
+    }
+]
+```
+
+* 读取说明：
+
+  读取时会将gameName转化为具体文件名fileName，读取fileName并反序列化为List\<TRankingRecord\>，取前MaxRecords记录返回
+
+```c#
+/* 该字段指示存档列表的容量，当前为7，分别是五位姑娘、阿草与一个魂 */
+int MaxRecords = 7;
     
-    * 读取说明：
+/* 保存小游戏排行榜数据至指定文件 */
+bool SaveRankInfo(List<RankingRecord> rankingRecords, string gameName);
     
-      读取时会将gameName转化为具体文件名fileName，读取fileName并反序列化为List\<TRankingRecord\>，取前MaxRecords记录返回
-    
-    ```c#
-    /* 该字段指示存档列表的容量，当前为7，分别是五位姑娘、阿草与一个魂 */
-    int MaxRecords = 7;
-        
-    /* 保存小游戏排行榜数据至指定文件 */
-    bool SaveRankInfo(List<RankingRecord> rankingRecords, string gameName);
-        
-    /* 保存小游戏排行榜数据至指定文件方法的泛型版本，泛型TRankingRecord约束为继承自RankingRecord */
-    bool SaveRankInfo<TRankingRecord>(List<TRankingRecord> rankingRecords, string gameName);
-    
-    /* 读取小游戏的排行榜数据，该方法为泛型方法，泛型TRankingRecord约束为继承自RankingRecord */
-    List<RankingRecord> LoadRankInfo(string gameName);
-    
-    /* 读取小游戏的排行榜数据方法的泛型版本，泛型TRankingRecord约束为继承自RankingRecord */
-    List<TRankingRecord> LoadRankInfo<TRankingRecord>(string gameName);
-    ```
-    
-    * 相关类：
-    
-      **RankingRecord**
-    
-      该类为排名记录项的基类，若需要使用更复杂的排名记录来记录额外的信息，请继承自该类
-    
-      ```c#
-      /* 玩家名 */
-      string Name { get; set; }
-      
-      /* 得分 */
-      int Score { get; set; }
-      
-      /* IComparable下的CompareTo方法，用于比较排名次序，该方法为虚方法，可以在派生类中重写 */
-      int CompareTo(RankingRecord other);
-      ```
-    
-      例如，如果你希望你的json文件中除了储存玩家名和得分外，还想储存本局游戏用时等信息，如下
-      
-      ```c#
-      [
-          {
-              "Name": "阿草",
-              "Score": 116,
-              "Time": 5
-          },
-          {
-              "Name": "一个魂",
-              "Score": 115,
-              "Time": 10
-          },
-          {
-              "Name": "一个一个魂",
-              "Score": 114,
-              "Time": 15
-          }
-      ]
-      ```
-      
-      你可以创建一个继承自**RankingRecord**的类，然后在读写排行榜信息时使用泛型版本的方法，如下
-      
-      ```c#
-      public class MyRankingRecord : RankingRecord
+/* 保存小游戏排行榜数据至指定文件方法的泛型版本，泛型TRankingRecord约束为继承自RankingRecord */
+bool SaveRankInfo<TRankingRecord>(List<TRankingRecord> rankingRecords, string gameName);
+
+/* 读取小游戏的排行榜数据，该方法为泛型方法，泛型TRankingRecord约束为继承自RankingRecord */
+List<RankingRecord> LoadRankInfo(string gameName);
+
+/* 读取小游戏的排行榜数据方法的泛型版本，泛型TRankingRecord约束为继承自RankingRecord */
+List<TRankingRecord> LoadRankInfo<TRankingRecord>(string gameName);
+```
+
+* 相关类：
+
+  **RankingRecord**
+
+  该类为排名记录项的基类，若需要使用更复杂的排名记录来记录额外的信息，请继承自该类
+
+  ```c#
+  /* 玩家名 */
+  string Name { get; set; }
+  
+  /* 得分 */
+  int Score { get; set; }
+  
+  /* IComparable下的CompareTo方法，用于比较排名次序，该方法为虚方法，可以在派生类中重写 */
+  int CompareTo(RankingRecord other);
+  ```
+
+  例如，如果你希望你的json文件中除了储存玩家名和得分外，还想储存本局游戏用时等信息，如下
+  
+  ```c#
+  [
       {
-          public int Time {get; set;}
+          "Name": "阿草",
+          "Score": 116,
+          "Time": 5
+      },
+      {
+          "Name": "一个魂",
+          "Score": 115,
+          "Time": 10
+      },
+      {
+          "Name": "一个一个魂",
+          "Score": 114,
+          "Time": 15
       }
-      
-      // 使用泛型方法保存
-      RankingManager.SaveRankingRecords<MyRankingRecord>(ranking2, "MyGame");
-      
-      // 使用泛型方法读取
-      var records = RankingManager.LoadRankingRecords<MyRankingRecord>("MyGame");
-      ```
-      
-      
+  ]
+  ```
+  
+  你可以创建一个继承自**RankingRecord**的类，然后在读写排行榜信息时使用泛型版本的方法，如下
+  
+  ```c#
+  public class MyRankingRecord : RankingRecord
+  {
+      public int Time {get; set;}
+  }
+  
+  // 使用泛型方法保存
+  RankingManager.SaveRankingRecords<MyRankingRecord>(ranking2, "MyGame");
+  
+  // 使用泛型方法读取
+  var records = RankingManager.LoadRankingRecords<MyRankingRecord>("MyGame");
+  ```
+  
 
 
- 2. **VNSimulation**
 
-    该类用于临时模拟小游戏与视觉小说的对话框调用等交互
+#### 3. AchievementManager
 
-    正式合并时只需要将该部分替换为正式接口即可
+该类未静态类，用于管理游戏的成就系统
 
-    详细内容请见注释
+注意目前尚未确认成就的apiName，你可以使用任意自定义名称来测试，在正式接入后会调整apiName
 
-    
+```c#
+// 查询指定成就是否解锁，返回一个bool值。在测试场景中，当成就不存在或成就为解锁时均为返回false
+bool IsUnlocked(string apiName);
 
- 3. **GlobalSettings**
+// 解锁成就，若成就已解锁无影响
+void Unlock(string apiName);
 
-    该类为静态类，用于设获取全局设置，目前提供以下全局设置信息
+// 锁定成就，若成就已锁定无影响
+void Lock(string apiName);
 
-    1：音乐音量：ActualVolumeOfMusic，只读属性，取值范围为[0,1]的float，直接赋值给AudioSource的volume即可
+// 获取成就进度，该项仅对进度型成就有效
+int GetProgress(string apiName);
 
-    2：效果音音量：ActualVolumeOfFX，只读属性，取值范围为[0,1]的float，直接赋值给AudioSource的volume即可
+// 设置成就进度，该项仅对进度型成就有效
+void SetProgress(string apiName, int value);
+```
 
-    目前来讲，只有这两个设置会影响小游戏，请注意在小游戏里完成与音量设置的同步代码
+注：apiName为成就的API名称，该名称目前尚未定论
 
-    
+
+
+#### 4. **VNSimulation**
+
+该类用于临时模拟小游戏与视觉小说的对话框调用等交互
+
+正式合并时只需要将该部分替换为正式接口即可
+
+详细内容请见注释
+
+
+
+#### 5. **GlobalSettings**
+
+该类为静态类，用于设获取全局设置，目前提供以下全局设置信息
+
+1：音乐音量：ActualVolumeOfMusic，只读属性，取值范围为[0,1]的float，直接赋值给AudioSource的volume即可
+
+2：效果音音量：ActualVolumeOfFX，只读属性，取值范围为[0,1]的float，直接赋值给AudioSource的volume即可
+
+目前来讲，只有这两个设置会影响小游戏，请注意在小游戏里完成与音量设置的同步代码
 
 
 
