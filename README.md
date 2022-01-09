@@ -331,4 +331,9 @@ void SetProgress(string apiName, int value);
 
 如确实有需要，请在下方填入bug反馈与调整要求
 
-1. NULL
+1. Sorting Layer 相关
+ * Default
+ * MiniGame
+ * MiniGame_Carol_纸带
+ * MiniGame_Carol_Music Box
+ * MiniGame_Carol_UI Top
